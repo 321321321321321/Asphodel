@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Poison Garden Mystery - Asphodel Chronicles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Garamond', 'Georgia', serif;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(20, 20, 40, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #c084fc;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+        
+        h2 {
+            font-size: 1.8em;
+            color: #a78bfa;
+            margin: 30px 0 20px 0;
+            border-bottom: 2px solid rgba(167, 139, 250, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #a78bfa;
+            font-style: italic;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .story-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .story-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .narrative {
+            margin: 20px 0;
+            text-align: justify;
+            font-size: 1.1em;
+        }
+        
+        .narrative p {
+            margin-bottom: 15px;
+        }
+        
+        .choice-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(138, 43, 226, 0.1);
+            border-left: 4px solid #a78bfa;
+            border-radius: 5px;
+        }
+        
+        .choice-prompt {
+            font-weight: bold;
+            color: #c084fc;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-family: 'Garamond', 'Georgia', serif;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .clue-tracker {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 20, 40, 0.95);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px solid #a78bfa;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+            z-index: 1000;
+        }
+        
+        .clue-count {
+            font-size: 1.3em;
+            color: #c084fc;
+            font-weight: bold;
+        }
+        
+        .clue-discovered {
+            background: rgba(192, 132, 252, 0.2);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #c084fc;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        
+        .clue-title {
+            font-weight: bold;
+            color: #c084fc;
+            margin-bottom: 8px;
+        }
+        
+        .warning {
+            background: rgba(220, 38, 38, 0.2);
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .character-intro {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+        
+        .ending-box {
+            background: rgba(192, 132, 252, 0.15);
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #c084fc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .ending-title {
+            font-size: 2em;
+            color: #c084fc;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .clue-tracker {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clue-tracker">
+        <div class="clue-count">Clues Found: <span id="clueCount">0</span>/12</div>
+    </div>
+    
+    <div class="container">
+        <h1>The Poison Garden Mystery</h1>
+        <div class="subtitle">An Asphodel Chronicles Interactive Investigation</div>
+        
+        <!-- PROLOGUE -->
+        <div id="section-prologue" class="story-section active">
+            <h2>Prologue: The City of Flowers and Shadows</h2>
+            
+            <div class="narrative">
+                <p>In the enigmatic port-city of Asphodel, where Victorian gaslight battles the encroaching fog each evening, the year 1895 has brought an unseasonably warm spring. The city's twelve districts pulse with their own peculiar life, but none more vibrantly than the Blooming Quarter, where gardens cascade from every balcony and perfume hangs thick as secrets in the air.</p>
+                
+                <p>You are about to witness an investigation that will test three remarkable women, each drawn to a mystery that begins with death and ends with transformation.</p>
+            </div>
+            
+            <div class="character-intro">
+                <p><strong>Miss Lavinia Bloomfield</strong>, twenty-four years of age, whose mastery of perfume chemistry has made her the most sought-after scent artisan in Asphodel. Fresh lavender adorns her auburn hair, and her nose can distinguish a hundred subtle variations in a single rose's fragrance.</p>
+            </div>
+            
+            <div class="character-intro">
+                <p><strong>Miss Rosalind Bramblethorne</strong>, twenty-eight, whose hands bear the proud scars of a thousand rose thorns. A toxicologist of fearsome reputation, she carries an antidote vial on a silver chain and fears nothing that grows in soil or shadow.</p>
+            </div>
+            
+            <div class="character-intro">
+                <p><strong>Mrs. Cordelia Hartsworth</strong>, thirty-one, a widow whose knowledge of botanical medicine has saved more lives than the city's doctors care to admit. She carries pressed flowers in a brass locket and hears truths in the pauses between words.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Three women. Twelve clues. One locked garden where something impossible is growing.</p>
+                
+                <p>The investigation begins on a Tuesday morning when the screaming started.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-1')">→ Begin the Investigation</button>
+        </div>
+        
+        <!-- SECTION 1: THE DISCOVERY -->
+        <div id="section-1" class="story-section">
+            <h2>Chapter One: The Golden Statue</h2>
+            
+            <div class="narrative">
+                <p>The Poison Garden had been locked for thirty years, ever since the eccentric botanist Kirka Thornwood vanished without trace, leaving behind her collection of deadly nightshade, hemlock, and plants whose very names made gardeners cross themselves. The iron gates bore a warning: <em>"Enter Not. Beauty Here Wears Thorns That Pierce the Soul."</em></p>
+                
+                <p>But this morning, the gates stood open.</p>
+                
+                <p>Lavinia arrived first, summoned by a frantic message from the Garden Quarter's constable. The scent hit her before she saw the body—a woman's perfume, jasmine and something else, something wrong that made her stomach turn.</p>
+                
+                <p>The victim knelt in the center of a bed of roses, as if in prayer. Her skin had taken on a golden-green sheen, and thin tendrils of vine grew from her fingertips, already rooting into the earth. Her face was frozen in an expression of absolute terror.</p>
+                
+                <p>"Miss Bloomfield," the constable stammered, "we haven't touched anything. But look—look at her hands."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #1 DISCOVERED: The Obvious Clue</div>
+                <p>The victim's transformation appears plant-like, with chlorophyll visible beneath translucent skin. Most observers assume this is some exotic poison's effect. But the tendrils are growing FROM her, not INTO her.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Rosalind Bramblethorne pushed through the gathering crowd, her practical boots crunching on gravel. She knelt beside the body, professional and unflinching, while Lavinia fought the urge to look away.</p>
+                
+                <p>"Don't touch her," Rosalind warned. "The transformation is still active. See how the leaves are still unfurling?" She pointed to small, perfect leaves emerging from the woman's hair. "I've never seen anything like this."</p>
+                
+                <p>Cordelia Hartsworth arrived last, drawn by the commotion. She took one look at the victim and pressed her hand to her mouth. "I know her. That's Eleanor Greaves, the baker's daughter. She was engaged to be married next month."</p>
+                
+                <p>"Was she known to visit the Poison Garden?" Lavinia asked.</p>
+                
+                <p>"No one visits the Poison Garden," Cordelia said softly. "It's been locked for decades."</p>
+                
+                <p>Rosalind stood, her eyes scanning the garden beds. "Then how did it get unlocked? And why did she come here?"</p>
+            </div>
+            
+            <div class="choice-container">
+                <div class="choice-prompt">Where should the investigators begin?</div>
+                <button class="button" onclick="goToSection('section-2a')">🔍 Examine the garden gates and lock mechanism</button>
+                <button class="button" onclick="goToSection('section-2b')">👤 Search the victim's clothing for clues about why she came</button>
+                <button class="button" onclick="goToSection('section-2c')">🌿 Investigate the plants surrounding the victim</button>
+            </div>
+        </div>
+        
+        <!-- SECTION 2A: GATES -->
+        <div id="section-2a" class="story-section">
+            <h2>Investigation: The Unlocked Gates</h2>
+            
+            <div class="narrative">
+                <p>Lavinia examined the iron gates while Rosalind inspected the lock. The metal was old, Victorian ironwork decorated with thorned roses and warning symbols.</p>
+                
+                <p>"The lock wasn't forced," Rosalind observed, running her scarred fingers over the mechanism. "It was opened with a key. See? No scratches, no damage."</p>
+                
+                <p>Cordelia picked up something from the ground just inside the gate—a small brass key on a silk ribbon. "This was just lying here. As if someone wanted it to be found."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #2 DISCOVERED: The Physical Evidence</div>
+                <p>A brass key on a purple silk ribbon, deliberately left at the scene. The ribbon is new, not aged like the key itself. Someone recently obtained an old key and wanted Eleanor to find it.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Lavinia sniffed the ribbon delicately. "Perfume. Recent. Within the last day." She closed her eyes, analyzing. "Wisteria and... something medicinal. Valerian root, perhaps?"</p>
+                
+                <p>"A sleep aid," Cordelia said. "My grandmother used to make it into tea."</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-3')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 2B: VICTIM -->
+        <div id="section-2b" class="story-section">
+            <h2>Investigation: The Victim's Secrets</h2>
+            
+            <div class="narrative">
+                <p>With careful hands wrapped in her handkerchief, Cordelia searched Eleanor's clothing. The transformation had frozen the young woman's pockets in place, but they could still be examined.</p>
+                
+                <p>"A letter," Cordelia said, extracting a folded paper. She read aloud: "<em>The garden holds the cure you seek. Come alone at dawn. Enter through the gate—the key will be waiting. Trust me, as you once trusted. —K</em>"</p>
+                
+                <p>"K," Rosalind repeated. "Kirka? The original owner of this garden disappeared thirty years ago."</p>
+                
+                <p>"Someone is using her name," Lavinia said. "But what cure? What was Eleanor seeking?"</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #3 DISCOVERED: The Hidden Message</div>
+                <p>A letter promising a "cure" and signed with "K"—possibly imitating Kirka Thornwood. Eleanor was lured here with the promise of healing something.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-3')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 2C: PLANTS -->
+        <div id="section-2c" class="story-section">
+            <h2>Investigation: The Poisoned Garden</h2>
+            
+            <div class="narrative">
+                <p>Rosalind moved through the garden beds with the confidence of someone who had spent her life among deadly things. Lavinia and Cordelia followed, careful not to brush against anything.</p>
+                
+                <p>"These shouldn't be blooming," Cordelia whispered. "Nightshade blooms in summer, not spring. And that hemlock—it's been dead for decades. Look at the wood."</p>
+                
+                <p>But dead wood sprouted fresh green leaves. Withered vines showed new growth. The entire garden was awakening.</p>
+                
+                <p>Rosalind knelt by a bed of roses surrounding the victim. "These aren't any variety I recognize. The thorns are too long, too sharp. And the color..." She touched a petal carefully. "They're almost glowing."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #4 DISCOVERED: The Witness Account (Plants as Witnesses)</div>
+                <p>The garden has recently been awakened—dead plants showing new growth. Something or someone has revitalized this entire ecosystem within the past few weeks.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-3')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 3: THE PATTERN EMERGES -->
+        <div id="section-3" class="story-section">
+            <h2>Chapter Two: The Second Victim</h2>
+            
+            <div class="narrative">
+                <p>The constable returned, his face pale. "Miss Bramblethorne, there's been another. At the Glass Conservatory. Same... condition."</p>
+                
+                <p>The three women exchanged glances and rushed to the conservatory, a Victorian glass dome where tropical specimens were cultivated. Inside, the humid air pressed against them like a living thing.</p>
+                
+                <p>The second victim stood in the orchid section, arms raised as if reaching for sunlight. Vines wrapped her torso, bark textured her skin, and small white flowers bloomed from her shoulders.</p>
+                
+                <p>"Catherine Marsh," Cordelia identified her. "A seamstress. She was..." She paused, uncomfortable. "She was known to be ill. Consumption, they said. The doctors gave her months."</p>
+                
+                <p>Lavinia circled the victim, her trained nose working. "The same scent profile. Wisteria, valerian, and something else underneath. Something floral but... rotting."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #5 DISCOVERED: The Pattern</div>
+                <p>Both victims were suffering from terminal or serious conditions. Eleanor's medical records (if investigated) would show she had consulted doctors about a wasting disease. They were seeking cures.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Rosalind found another letter, this one clutched in Catherine's transformed hand. The message was nearly identical: a promise of cure, signed with "K," instructions to come alone.</p>
+                
+                <p>"Someone is targeting sick women," Rosalind said grimly. "Offering them hope, then..."</p>
+                
+                <p>"Transforming them," Lavinia finished. "But why? What's the purpose?"</p>
+                
+                <p>Cordelia examined the flowers growing from Catherine's shoulders. "These are medicinal flowers. Feverfew, echinacea. Plants that fight disease." Her voice dropped to a whisper. "Someone is trying to cure them. By turning them into plants."</p>
+            </div>
+            
+            <div class="choice-container">
+                <div class="choice-prompt">The investigation deepens. What should they pursue?</div>
+                <button class="button" onclick="goToSection('section-4a')">📚 Research Kirka Thornwood's original work and experiments</button>
+                <button class="button" onclick="goToSection('section-4b')">👥 Interview families—who told the victims about the "cure"?</button>
+                <button class="button" onclick="goToSection('section-4c')">⏰ Determine the timeline—when were the letters delivered?</button>
+            </div>
+        </div>
+        
+        <!-- SECTION 4A: RESEARCH -->
+        <div id="section-4a" class="story-section">
+            <h2>Investigation: The Scholar's Research</h2>
+            
+            <div class="narrative">
+                <p>The three women traveled to the Scholars' Enclave, where the Great Library held records dating back centuries. Cordelia, who had spent months here researching botanical medicine, led them to the archive of "Controversial Scientific Inquiries."</p>
+                
+                <p>"Kirka Thornwood," she read from a yellowed journal, "was brilliant but obsessed. She believed plant biology held the key to curing all human disease. She theorized that hybrid organisms—part human, part plant—could photosynthesize nutrients and regenerate damaged tissue indefinitely."</p>
+                
+                <p>Lavinia shuddered. "That's monstrous."</p>
+                
+                <p>"She thought it was merciful," Cordelia continued. "Her notes describe watching her sister die of pneumonia, helpless to save her. She wrote: '<em>If Margaret could have drawn life from sunlight itself, she would still live. I will give others what I could not give her.</em>'"</p>
+                
+                <p>Rosalind found a sketch in the margin—a woman's form, roots extending from her feet, leaves unfurling from her hair. "This is what we saw. Exactly."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #6 DISCOVERED: The Personal Connection</div>
+                <p>Kirka Thornwood's obsession began with her sister's death. She saw transformation as salvation, not horror. Her good intentions—to prevent death from disease—drove her to monstrous experimentation.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>But the final entry in Kirka's journal stopped them cold: "<em>The transformation is complete. I have succeeded where medicine failed. I am no longer dying—I am becoming. Let those who suffer seek me in my garden, and I shall grant them eternal blooming.</em>"</p>
+                
+                <p>"She experimented on herself," Lavinia whispered. "Thirty years ago."</p>
+                
+                <p>"And she's still alive," Rosalind said. "Still in that garden. Still transforming the desperate and dying."</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-5')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 4B: INTERVIEWS -->
+        <div id="section-4b" class="story-section">
+            <h2>Investigation: The Families Speak</h2>
+            
+            <div class="narrative">
+                <p>Cordelia's gentle manner made her the natural choice for interviewing the bereaved families. Lavinia and Rosalind accompanied her to Eleanor Greaves' home, where her mother sat hollow-eyed by the cold hearth.</p>
+                
+                <p>"She was so excited," Mrs. Greaves said. "A woman came to her three days ago. Elegant lady in old-fashioned clothes, wearing a veil. Said she knew of a cure for Eleanor's condition."</p>
+                
+                <p>"Did Eleanor tell you what condition?" Cordelia asked gently.</p>
+                
+                <p>The mother's hands twisted in her lap. "She'd been to six doctors. They all said the same thing—her lungs were deteriorating. She had a year, perhaps less. But this woman promised... she promised Eleanor could be saved."</p>
+                
+                <p>"Did the woman give her name?" Lavinia asked.</p>
+                
+                <p>"Miss Thornwood. She said she'd once been a healer herself, and that she grew medicines no doctor could match."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #7 DISCOVERED: The Contradiction</div>
+                <p>Kirka Thornwood is actively recruiting victims—she's not waiting for them to stumble upon her garden. She's seeking out the desperately ill and offering them hope. This suggests intention, not accident.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Catherine Marsh's family told an identical story. A veiled woman in antique dress, appearing three days before the transformation, promising a cure that medicine couldn't provide.</p>
+                
+                <p>"She showed Catherine flowers," her sister said. "Growing right from her palm. Said it was proof that life could take new forms."</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-5')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 4C: TIMELINE -->
+        <div id="section-4c" class="story-section">
+            <h2>Investigation: The Temporal Pattern</h2>
+            
+            <div class="narrative">
+                <p>Rosalind's methodical mind excelled at timeline reconstruction. She spread papers across a table in the Anchor & Crown Hotel, mapping events with precision.</p>
+                
+                <p>"Eleanor received her letter five days ago. Found dead yesterday morning. Catherine received hers six days ago, found the day before Eleanor."</p>
+                
+                <p>"They died in reverse order of contact," Lavinia noted. "Why?"</p>
+                
+                <p>Cordelia examined the letters side by side. "The handwriting is identical. Same ink, same paper. But look—Eleanor's letter is more elaborate, more persuasive. Catherine's is simpler."</p>
+                
+                <p>"She's learning," Rosalind said. "Getting better at luring them in. Eleanor was the second attempt, and the letter was more refined."</p>
+                
+                <p>"Which means there might be others," Lavinia said. "Earlier attempts we haven't found yet."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #8 DISCOVERED: The Timeline Clue</div>
+                <p>The transformations occur 3-4 days after initial contact. The process is not instantaneous—Kirka needs time to prepare, or the transformation itself takes days to complete.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-5')">→ Continue Investigation</button>
+        </div>
+        
+        <!-- SECTION 5: THE TRAP REVEALED -->
+        <div id="section-5" class="story-section">
+            <h2>Chapter Three: The Living Garden</h2>
+            
+            <div class="narrative">
+                <p>On the third day of investigation, Cordelia received a letter. Purple silk ribbon, brass key, elegant handwriting.</p>
+                
+                <p>"<em>Mrs. Hartsworth, I know you suffer. Your grief consumes you like disease consumes flesh. I can ease your pain, as I have eased others'. Come to the Poison Garden at dawn. Come alone. The transformation is beautiful, I promise. —K</em>"</p>
+                
+                <p>Lavinia snatched the letter from her hands. "You're not going."</p>
+                
+                <p>"I have to," Cordelia said quietly. "It's the only way to confront her."</p>
+                
+                <p>"She knows about your husband," Rosalind observed. "About your grief. She's been watching us, learning about us."</p>
+                
+                <p>Lavinia's jaw set. "Then we all go. Together."</p>
+                
+                <p>That night, they planned. Rosalind prepared antidotes for every plant toxin she could identify. Lavinia created a counter-perfume, hoping to neutralize whatever airborne agent Kirka might use. Cordelia packed her medical bag with tinctures and salves.</p>
+                
+                <p>At dawn, they entered the Poison Garden.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>The garden had changed. Eleanor and Catherine still stood where they'd fallen, but now they were surrounded by dozens more—women in various stages of transformation, some barely altered, others fully metamorphosed into human-shaped plants.</p>
+                
+                <p>They were all breathing. All alive. All conscious.</p>
+                
+                <p>Eleanor's eyes tracked Lavinia as she passed, pleading and hopeless.</p>
+                
+                <p>"My garden grows," said a voice like rustling leaves.</p>
+                
+                <p>From the largest rose bower emerged a woman—or what had once been a woman. Kirka Thornwood was beautiful and terrible, her skin bark-textured, her hair flowing vines hung with white flowers. Roots extended from her feet, anchoring her to the earth. She wore a dress of woven ivy that moved with her breathing.</p>
+                
+                <p>"I have given them eternity," Kirka said, spreading her arms. "They were dying. Now they are becoming. Forever nourished by sun and soil, forever blooming, forever free from pain."</p>
+                
+                <p>"They're suffering," Cordelia said, her voice breaking. "Can't you see? They want to die. You've trapped them in a nightmare."</p>
+                
+                <p>"No." Kirka's face showed genuine confusion. "I saved them. As I wished someone had saved my sister. As I saved myself."</p>
+            </div>
+            
+            <div class="choice-container">
+                <div class="choice-prompt">The confrontation has begun. How should they proceed?</div>
+                <button class="button" onclick="goToSection('section-6a')">🔬 Use Rosalind's antidotes to attempt reversal</button>
+                <button class="button" onclick="goToSection('section-6b')">💔 Appeal to Kirka's humanity and grief</button>
+                <button class="button" onclick="goToSection('section-6c')">🔥 Destroy the garden's root system</button>
+            </div>
+        </div>
+        
+        <!-- SECTION 6A: SCIENCE -->
+        <div id="section-6a" class="story-section">
+            <h2>Confrontation: The Scientific Solution</h2>
+            
+            <div class="narrative">
+                <p>Rosalind stepped forward, her antidote vials clinking in her satchel. "Your transformation is a toxin, not a cure. Every poison has an antidote."</p>
+                
+                <p>She approached Eleanor first, uncorking a vial of clear liquid. "This is distilled from the roots of Solomon's seal, with extracts of—"</p>
+                
+                <p>Kirka moved impossibly fast. Vines erupted from the earth, wrapping Rosalind's wrist, pulling her hand away. "You would kill them," Kirka hissed. "Return them to mortality, to disease, to death."</p>
+                
+                <p>"I would return them to themselves!" Rosalind struggled against the vines. "This isn't life—it's imprisonment!"</p>
+                
+                <p>Lavinia realized then what Rosalind had discovered in her research: the transformation was reversible, but only in the first days. Eleanor and Catherine were too far gone. The antidote would kill them as surely as the poison.</p>
+                
+                <p>"Rosalind," Lavinia called urgently. "The newer victims. Focus on the ones who arrived in the last two days."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #9 DISCOVERED: The Technical Detail</div>
+                <p>The transformation becomes irreversible after 72 hours. The plant cells fully replace human cells, and removing the plant tissue would destroy vital organs. Only the most recent victims can be saved.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>Understanding dawned in Rosalind's face. She stopped struggling and looked at Cordelia. "We can save three. Maybe four. The ones who came yesterday and the day before."</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-7')">→ The Final Choice Approaches</button>
+        </div>
+        
+        <!-- SECTION 6B: EMPATHY -->
+        <div id="section-6b" class="story-section">
+            <h2>Confrontation: The Human Appeal</h2>
+            
+            <div class="narrative">
+                <p>Cordelia stepped forward, her pressed flower locket catching the dawn light. "I understand," she said softly. "I lost my husband to fever two years ago. I held his hand as he burned, helpless to ease his suffering."</p>
+                
+                <p>Kirka's expression flickered—a glimpse of the woman beneath the bark.</p>
+                
+                <p>"Every day I wish I could have saved him," Cordelia continued. "Every patient I help, I think: why couldn't I help him? Why wasn't my knowledge enough?"</p>
+                
+                <p>"Then you understand!" Kirka moved closer, eager. "You understand why I had to do this. Why I must continue."</p>
+                
+                <p>"No," Cordelia said gently. "I understand the pain that drives you. But look at them, Kirka. Really look. They're not blooming. They're screaming silently. This isn't the gift you believe it to be."</p>
+                
+                <p>Kirka turned to her garden, really seeing the transformed women for the first time in decades. Eleanor's frozen terror. Catherine's reaching arms. The slow horror in every face.</p>
+                
+                <p>"I was... I was helping them," Kirka whispered. "I was saving them from death."</p>
+                
+                <p>"You were saving yourself from grief," Cordelia said. "From the grief of losing your sister. But you can't undo her death by preventing others. You're just creating new grief, new suffering."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #10 DISCOVERED: The Missed Opportunity</div>
+                <p>Kirka has been deluding herself for thirty years, unable to see the suffering she causes because she's trapped in the moment of her sister's death. She isn't evil—she's traumatized and lost in her own transformation.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-7')">→ The Final Choice Approaches</button>
+        </div>
+        
+        <!-- SECTION 6C: DESTRUCTION -->
+        <div id="section-6c" class="story-section">
+            <h2>Confrontation: The Radical Solution</h2>
+            
+            <div class="narrative">
+                <p>Lavinia's perfume expertise extended to volatile compounds. She'd brought something else in her satchel—lamp oil and matches.</p>
+                
+                <p>"If we can't reverse the transformation," she said, "we can end their suffering."</p>
+                
+                <p>"You would burn them?" Kirka's voice rose to a shriek. "Murderer! They live!"</p>
+                
+                <p>"They suffer!" Lavinia shot back. "And you're the one who made them this way. Every day you let them continue is another day of torment."</p>
+                
+                <p>She moved toward the largest rose bower, where Kirka's roots ran deepest into the earth. "Your root system feeds them all, doesn't it? You're the heart of this garden. If we sever you, they all die. Quickly. Mercifully."</p>
+                
+                <p>Rosalind understood the desperate logic. "The newer victims—we could try the antidote first. Save who we can. Then..."</p>
+                
+                <p>"Then burn the rest," Lavinia finished grimly. "It's horrible. But it's more merciful than leaving them like this."</p>
+                
+                <p>Kirka's transformation had made her part of the garden, but it had also made her vulnerable. Fire would end her eternal life—and the lives of all her "saved" victims.</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #11 DISCOVERED: The Final Piece</div>
+                <p>Kirka is the source—her root system connects to every transformed victim. She doesn't just transform them; she sustains them. Killing her would end the transformations permanently... and kill everyone already transformed.</p>
+            </div>
+            
+            <button class="button" onclick="goToSection('section-7')">→ The Final Choice Approaches</button>
+        </div>
+        
+        <!-- SECTION 7: THE ULTIMATE DECISION -->
+        <div id="section-7" class="story-section">
+            <h2>Chapter Four: The Garden's Fate</h2>
+            
+            <div class="narrative">
+                <p>The dawn light strengthened, casting long shadows through the Poison Garden. The three women stood together, having gathered all the pieces of a terrible puzzle.</p>
+                
+                <p>Kirka Thornwood, the Blossom Witch, was both victim and victimizer—transformed by her own grief into something that could no longer understand human suffering. Her garden of "saved" women lived in eternal torment, sustained by her root system, unable to die or truly live.</p>
+                
+                <p>The newest victims—three women who had arrived only in the past two days—stood at the garden's edge, their transformations barely begun. Bark crept up their legs, but their eyes still showed human comprehension. They could still be saved.</p>
+                
+                <p>But Eleanor, Catherine, and dozens more were too far gone. The transformation had consumed them completely. Reversing it would kill them. Leaving them would condemn them to decades—perhaps centuries—of conscious imprisonment.</p>
+                
+                <p>And Kirka herself, once a brilliant botanist driven by love and loss, now a creature that could not understand it had become the very death it sought to prevent.</p>
+            </div>
+            
+            <div class="choice-container">
+                <div class="choice-prompt">The final decision rests with you. How many clues have you gathered?</div>
+                <button class="button" onclick="checkCluesAndRoute('tragic')">Make your choice with limited understanding (0-6 clues)</button>
+                <button class="button" onclick="checkCluesAndRoute('bittersweet')">Make your choice with substantial knowledge (7-10 clues)</button>
+                <button class="button" onclick="checkCluesAndRoute('triumphant')">Make your choice with complete understanding (11-12 clues)</button>
+            </div>
+        </div>
+        
+        <!-- TRAGIC ENDING -->
+        <div id="ending-tragic" class="story-section">
+            <div class="ending-box">
+                <div class="ending-title">Tragic Ending: The Garden Burns</div>
+            </div>
+            
+            <div class="narrative">
+                <p>With insufficient understanding of Kirka's true nature or the transformation's mechanics, the three women made the choice that seemed most merciful: fire.</p>
+                
+                <p>Lavinia's lamp oil spread quickly through the dry vines and ancient roots. Rosalind tried desperately to administer antidotes to the newest victims, but without understanding the 72-hour window, she used the wrong compounds. The flames reached them before the treatment could work.</p>
+                
+                <p>Kirka screamed—not in rage, but in genuine anguish, finally understanding what she had done. The fire severed her connection to her victims, and in that moment of disconnection, she felt their thirty years of suffering as her own.</p>
+                
+                <p>"Margaret," she whispered, her sister's name, as the flames consumed her. "I'm sorry. I only wanted to save you."</p>
+                
+                <p>The garden burned through the morning. By noon, nothing remained but ash and the iron gates that had failed to keep the desperate away.</p>
+                
+                <p>Cordelia, Lavinia, and Rosalind stood at the smoking ruins, haunted by what they'd done.</p>
+                
+                <p>"We saved no one," Cordelia whispered.</p>
+                
+                <p>"We ended their suffering," Rosalind said, but her voice held no conviction.</p>
+                
+                <p>Lavinia looked at the ashes, where human and plant remains mingled indistinguishably. "We became executioners when we meant to be saviors. Just like her."</p>
+            </div>
+            
+            <div class="warning">
+                <p><strong>The Legend's Moral Fulfilled:</strong> Protection without understanding becomes violence. The women sought to end suffering but, lacking full knowledge, they destroyed rather than saved. Like Kirka before them, good intentions led to tragedy when wisdom was absent.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>In the weeks that followed, three more letters arrived at homes around Asphodel—letters signed with "K," offering cures to the desperate. But the investigators never found their source.</p>
+                
+                <p>For Kirka's root system had extended far beyond the Poison Garden's walls, and cutting down one bower had not killed the entire network.</p>
+                
+                <p>Somewhere in Asphodel's soil, the Blossom Witch still grew.</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #12 REVEALED (Too Late): The Confirming Evidence</div>
+                <p>Kirka's journal, found in the ashes, explained that her root system extended throughout the entire Blooming Quarter. Destroying the garden only severed one bower. The transformation can continue from any of her root nodes. Only by understanding and working with her could the garden be truly ended.</p>
+            </div>
+            
+            <button class="button" onclick="restart()">↺ Begin Again with New Knowledge</button>
+        </div>
+        
+        <!-- BITTERSWEET ENDING -->
+        <div id="ending-bittersweet" class="story-section">
+            <div class="ending-box">
+                <div class="ending-title">Bittersweet Ending: The Partial Salvation</div>
+            </div>
+            
+            <div class="narrative">
+                <p>Armed with substantial knowledge but not complete understanding, the three women made a calculated choice: save who they could, then end Kirka's ability to continue her work.</p>
+                
+                <p>Rosalind worked frantically, administering her carefully prepared antidotes to the three newest victims. Their transformations had barely begun—bark peeling away to reveal flesh beneath, leaves withering and falling from their hair. They screamed as human cells reasserted themselves, the pain of reversal as intense as the original transformation.</p>
+                
+                <p>But they lived. They remained human.</p>
+                
+                <p>Meanwhile, Cordelia spoke to Kirka, her words gentle but firm, explaining the suffering the Blossom Witch had caused. Recognition dawned slowly in Kirka's ancient eyes—the terrible understanding that her thirty years of "mercy" had been thirty years of torture.</p>
+                
+                <p>"I cannot undo what I've done," Kirka said, her voice breaking. "They cannot be saved. But I can prevent more."</p>
+                
+                <p>Lavinia held the lamp oil, ready to burn the garden if necessary. But Kirka made a different choice.</p>
+                
+                <p>She knelt in the earth, her root system pulsing with a final surge of energy. "I will release them," she said. "Not into life—they cannot return to life. But into death. The death I should have let them have."</p>
+                
+                <p>One by one, the transformed women simply... stopped. The consciousness that had been trapped in plant form finally faded. Their bodies remained, strange hybrid statues in a garden that would grow wild with time, but the suffering ended.</p>
+                
+                <p>Kirka herself began to wither. Without her connection to her victims, without the purpose that had sustained her transformation, she was simply an old woman who had experimented on herself thirty years ago.</p>
+                
+                <p>"Will you bury me beside my sister?" she asked. "I should like to be with her again."</p>
+                
+                <p>She died at sunset, bark crumbling to dust, vines turning to ash, the Blossom Witch becoming nothing more than a warning and a sorrow.</p>
+            </div>
+            
+            <div class="warning">
+                <p><strong>The Legend's Moral Partially Fulfilled:</strong> Protection that changes someone's nature creates problems worse than the original. The women understood enough to save three lives and end the suffering of dozens more, but not enough to find a perfect solution. In a dark world, partial victory is sometimes all that's possible.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>The three women buried Kirka Thornwood in the cemetery beside her sister Margaret, whose grave had stood lonely for sixty years. They marked it simply: "Kirka Thornwood, Botanist. She Loved Too Much."</p>
+                
+                <p>The Poison Garden was sealed again, this time by the city's order. The transformed bodies—no longer conscious but still standing—became strange monuments to good intentions gone terribly wrong.</p>
+                
+                <p>Three women lived who would have died. Dozens were granted the death they'd been denied. And three investigators carried the weight of what they'd learned about mercy, horror, and the price of understanding things too late.</p>
+                
+                <p>"We did what we could," Rosalind said at the cemetery.</p>
+                
+                <p>"Is that enough?" Lavinia asked.</p>
+                
+                <p>Cordelia placed flowers on both graves—Kirka's and Margaret's. "It has to be."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #12 REVEALED: The Confirming Evidence</div>
+                <p>Kirka's journal, found in her rose bower, explained that conscious will sustained the transformations. By choosing to release her victims, she ended their suffering. The transformation required her active maintenance—without it, the plant-human hybrids could finally die naturally.</p>
+            </div>
+            
+            <button class="button" onclick="restart()">↺ Begin Again with New Knowledge</button>
+        </div>
+        
+        <!-- TRIUMPHANT ENDING -->
+        <div id="ending-triumphant" class="story-section">
+            <div class="ending-box">
+                <div class="ending-title">Triumphant Ending: The Garden Redeemed</div>
+            </div>
+            
+            <div class="narrative">
+                <p>With nearly complete understanding, the three women saw the solution that violence would have obscured: transformation was not poison but connection, and connection could be redirected.</p>
+                
+                <p>"Kirka," Cordelia said gently, "you maintain them through your root system. You feel what they feel, don't you? That's why you can't see their suffering—you've spent thirty years blocking it out to survive."</p>
+                
+                <p>The Blossom Witch's bark-face cracked with something like tears. "If I feel it all... thirty years of agony from dozens of souls... it will destroy me."</p>
+                
+                <p>"Yes," Rosalind said, not unkindly. "But it will also free them. You can release them into peaceful death, feeling their relief as you've been feeling their pain."</p>
+                
+                <p>"Or," Lavinia added, her perfumer's mind working, "you can maintain them but change what you're maintaining. Not imprisonment. Not transformation. Just... peace. Let them dream. Let them sleep in the garden they've become part of."</p>
+                
+                <p>Kirka looked between the three women, understanding dawning. "I cannot undo the transformation. But I can change its nature?"</p>
+                
+                <p>"Pain is a chemical signal," Rosalind explained. "Terror is a neural pattern. You can block those signals, redirect those patterns. Make their existence peaceful even if you can't make them human again."</p>
+                
+                <p>It took hours. Kirka, connected to every transformed woman through her root system, had to touch each one mentally, apologize to each one individually, and then gently shift their consciousness into something like sleep.</p>
+                
+                <p>Not death. Not active life. But something in between—a dreaming existence where they felt sun on leaves, rain on petals, wind through branches. Where human memory faded into plant simplicity. Where suffering ended not through death but through transformation of a different kind.</p>
+                
+                <p>The newest three victims, Rosalind carefully restored to full humanity with her antidotes, applied at exactly the right moment in exactly the right dosage.</p>
+                
+                <p>When it was done, Kirka herself remained—but changed. She could not undo her own transformation, but she no longer needed to recruit new victims. Her garden was complete.</p>
+                
+                <p>"I will tend them," she said quietly. "For however long I live. They will know only peace. I will carry the memory of what I did, so they don't have to."</p>
+            </div>
+            
+            <div class="warning">
+                <p><strong>The Legend's Moral Transcended:</strong> Protection without understanding becomes imprisonment—but understanding can transform even imprisonment into sanctuary. The investigators found the wisdom to see beyond destruction or preservation alone, instead finding a third path that honored both life and the consequences of past mistakes.</p>
+            </div>
+            
+            <div class="narrative">
+                <p>The Poison Garden was not sealed but sanctified. The city declared it a memorial garden, tended by Kirka Thornwood, who would live out her extended life caring for those she had inadvertently harmed.</p>
+                
+                <p>Visitors came to see the strange beauty—human-shaped trees that swayed in the wind, plant-women whose faces bore expressions of contentment. Children played nearby, unafraid, sensing somehow that this was not a place of horror but of complicated peace.</p>
+                
+                <p>The three newest victims recovered fully, their brief transformations leaving only small scars—bark-textured patches on their ankles, leaves that grew from their hair in spring. They lived full lives, grateful for their salvation.</p>
+                
+                <p>And Cordelia, Lavinia, and Rosalind became known throughout Asphodel as the women who solved the Poison Garden mystery—not through violence or surrender, but through understanding that some problems require not destruction but transformation.</p>
+                
+                <p>"We saved three lives," Rosalind said, standing at the garden gate a year later. "And gave peace to dozens more."</p>
+                
+                <p>"We did it together," Lavinia added. "Each of our skills was necessary."</p>
+                
+                <p>Cordelia placed fresh flowers by the gate—not mourning flowers, but blooms that meant hope and renewal. "And we understood that mercy takes many forms. Sometimes salvation is reversal. Sometimes it's ending. And sometimes..."</p>
+                
+                <p>She looked at the peaceful garden, where human-trees dreamed in the sunlight.</p>
+                
+                <p>"Sometimes it's transformation."</p>
+            </div>
+            
+            <div class="clue-discovered">
+                <div class="clue-title">CLUE #12 REVEALED: The Confirming Evidence</div>
+                <p>Kirka's journal contained not just her transformation research but her sister's favorite lullaby, which she sang to soothe Margaret's pain. The same lullaby, transmitted through the root system as chemical signals, could shift the transformed victims' consciousness into peaceful dreaming. The cure was always in the poison; the investigators just needed complete understanding to see it.</p>
+            </div>
+            
+            <button class="button" onclick="restart()">↺ Experience the Mystery Again</button>
+        </div>
+    </div>
+    
+    <script>
+        let cluesFound = 0;
+        const foundClues = new Set();
+        
+        function updateClueCount() {
+            document.getElementById('clueCount').textContent = cluesFound;
+        }
+        
+        function goToSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.story-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Count clues in this section (only once per section)
+                if (!foundClues.has(sectionId)) {
+                    const clues = targetSection.querySelectorAll('.clue-discovered');
+                    cluesFound += clues.length;
+                    foundClues.add(sectionId);
+                    updateClueCount();
+                }
+            }
+        }
+        
+        function checkCluesAndRoute(endingType) {
+            const actualClues = cluesFound;
+            
+            // Route based on actual clues found
+            if (actualClues <= 6) {
+                goToSection('ending-tragic');
+            } else if (actualClues <= 10) {
+                goToSection('ending-bittersweet');
+            } else {
+                goToSection('ending-triumphant');
+            }
+        }
+        
+        function restart() {
+            cluesFound = 0;
+            foundClues.clear();
+            updateClueCount();
+            goToSection('section-prologue');
+        }
+        
+        // Initialize
+        updateClueCount();
+    </script>
+</body>
+</html>
